@@ -4,6 +4,7 @@ import React from "react";
 import { useSetRecoilState } from "recoil";
 import { authModalState } from "../../../atoms/authModalAtom";
 import { TiHome } from "react-icons/ti";
+import Communities from "./Communities";
 
 const UserMenu: React.FC = () => {
   const setAuthModalState = useSetRecoilState(authModalState);
@@ -27,7 +28,7 @@ const UserMenu: React.FC = () => {
           <ChevronDownIcon />
         </Flex>
       </MenuButton>
-       <MenuList> {/*<Comunities /> */}Comunities</MenuList> 
+       <MenuList> <Communities /> Comunities</MenuList> 
     </Menu>
   );
 };
