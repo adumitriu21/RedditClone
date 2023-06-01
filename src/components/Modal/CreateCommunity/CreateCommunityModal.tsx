@@ -31,6 +31,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
   const [communityName, setCommunityName] = useState("");
   const [charsRemaining, setCharsRemaning] = useState(21);
   const [communityType, setCommunityType] = useState("public");
+  const [error, setError] = useState('')
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value.length > 21) return;
@@ -46,6 +47,10 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
   ) => {
     setCommunityType(event.target.name);
   };
+
+  const handleCreateCommunity = async () => {
+
+  }
   return (
     <>
       <Modal isOpen={open} onClose={handleClose} size='lg'>
@@ -95,6 +100,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
               >
                 {charsRemaining} characters remaining
               </Text>
+              <Text fontSize='9pt' color='red'>{error} </Text>
               <Box mt={4} mb={4}>
                 <Text fontWeight={600} fontSize={15}>
                   Community Type
