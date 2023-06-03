@@ -16,7 +16,7 @@ import {
   Flex,
   Icon,
 } from "@chakra-ui/react";
-import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
+import { doc, getDoc, runTransaction, serverTimestamp, setDoc } from "firebase/firestore";
 import React, { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { BsFillEyeFill, BsFillPersonFill } from "react-icons/bs";
@@ -68,20 +68,32 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
 
     try{
         const communityRefDoc = doc(firestore, 'communities', communityName);
-        const communityDoc = await getDoc(communityRefDoc);
 
-        //check that name doesnt already exist in DB
-        if(communityDoc.exists()){
-            throw new Error('Sorry, r/${communityName} is taken. Try another one!')
-        }
-    
-        // create community
-        await setDoc(communityRefDoc, {
+        await runTransaction(firestore, async (transaction) => {
+          const communityDoc = await transaction.get(communityRefDoc);
+          //check that name doesnt already exist in DB
+          if(communityDoc.exists()){
+              throw new Error('Sorry, r/${communityName} is taken. Try another one!')
+          }
+
+          transaction.set(communityRefDoc, {
             creatorId : user?.uid,
             createdAt : serverTimestamp(),
             numberOfMembers: 1,
             privacyType : communityType
         });
+
+        //create community snippet on user
+         transaction.set(doc(firestore, `user/${user?.uid}/communitySnippets`, communityName),{
+          commuityId: communityName,
+          isModerator: true,
+         })
+       
+        });
+       
+    
+        // create community
+        
     
         setLoading(false);
     
