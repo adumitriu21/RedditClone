@@ -5,7 +5,8 @@ import { Community } from '../../../atoms/communitiesAtom';
 import { firestore } from '../../../firebase/clientApp';
 import safejsonstringify from 'safe-json-stringify';
 import NotFound from '../../../components/community/NotFound';
-import Header from '../../../components/community/header';
+import Header from '../../../components/community/Header';
+import PageContent from '../../../components/layout/PageContent';
 
 type CommunityPageProps = {
     communityData: Community;
@@ -20,6 +21,14 @@ const CommunityPage:React.FC<CommunityPageProps> = ({ communityData }) => {
     return (
         <>
             <Header communityData={communityData}/>
+            <PageContent>
+                <>
+                    <div>LHS</div>
+                </>
+                <>
+                    <div>RHS</div>
+                </>
+            </PageContent>
         </>
     )
 }
