@@ -1,4 +1,4 @@
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, doc, getDocs, increment, writeBatch } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useRecoilState } from 'recoil';
@@ -38,14 +38,74 @@ const useCommunityData = () => {
 
             console.log('user snippets', snippets)
             console.log('community state value', communityStateValue)
-        }catch (error){
+        }catch (error: any){
             console.log('get my snippets error', error)
+            setError(error.message)
         }
     }
 
-    const joinCommunity = (communityData: Community) => {};
+    const joinCommunity = async (communityData: Community) => {
+        
+        try{
+            const batch = writeBatch(firestore);
+            //create new community snippet for user
+            const newSnippet: CommunitySnippet = {
+                communityId: communityData.id,
+                imageURL: communityData.imageURL || "",
+            };
 
-    const leaveCommunity = (communityId: string) => {};
+            batch.set(doc(firestore, `user/${user?.uid}/communitySnippets`, communityData.id), newSnippet)
+
+            //updating the number of members in the commuity
+            batch.update(doc(firestore, 'communities', communityData.id),{
+                numberOfMembers: increment(1)
+            })
+
+            await batch.commit()
+
+            //update recoil state - communityState.mySnippets
+            setCommunityStateValue((prev) => ({
+                ...prev,
+                mySnippets: [...prev.mySnippets, newSnippet]
+            }));
+
+        } catch(error: any){
+            console.log('join community error', error)
+            setError(error.message)
+        }
+
+        setLoading(false)
+    };
+
+    const leaveCommunity = async (communityId: string) => {
+        //cdelete community snippet for user
+        //updating the number of members in the commuity
+
+        //update recoil state - communityState.mySnippets
+
+        try {
+            const batch = writeBatch(firestore);
+
+            batch.delete(doc(firestore,`user/${user?.uid}/communitySnippets`, communityId ))
+
+            batch.update(doc(firestore, 'communities', communityId),{
+                numberOfMembers: increment(-1)
+            })
+
+            //update recoil state - communityState.mySnippets
+            setCommunityStateValue((prev) => ({
+                ...prev,
+                mySnippets: prev.mySnippets.filter( item => item.communityId !== communityId)
+            }));
+            
+            await batch.commit();
+        } catch (error: any) {
+            console.log('leave community error', error)
+            setError(error.message)
+        }
+
+        setLoading(false)
+    };
 
     useEffect(() => {
         if(!user) return;
