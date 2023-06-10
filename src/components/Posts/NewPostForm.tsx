@@ -47,7 +47,16 @@ const NewPostForm: React.FC<NewPostFormProps> = () => {
   const [selectedFile, setSelectedFile] = useState<string>();
   const [loading, setLoading] = useState(false);
 
-  const handleCreatePost = async () => {};
+  const handleCreatePost = async () => {
+    //construct new post object => type Post
+    //store the post inside Post collection
+    //see if there is an image included in the post
+        //store image in the separate storage
+        //update the post with the img url
+
+        
+
+  };
 
   const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const reader = new FileReader();
