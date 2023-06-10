@@ -5,6 +5,7 @@ import { BsLink45Deg, BsMic } from "react-icons/bs";
 import { BiPoll } from "react-icons/bi";
 import TabItem from "./TabItem";
 import TextInputs from "./PostForm/TextInputs";
+import ImageUpload from "./PostForm/ImageUpload";
 
 type NewPostFormProps = {};
 
@@ -48,7 +49,19 @@ const NewPostForm: React.FC<NewPostFormProps> = () => {
 
   const handleCreatePost = async () => {};
 
-  const onSelectImage = () => {};
+  const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const reader = new FileReader();
+
+    if (event.target.files?.[0]) {
+      reader.readAsDataURL(event.target.files[0]);
+    }
+
+    reader.onload = (readerEvent) => {
+      if (readerEvent.target?.result) {
+        setSelectedFile(readerEvent.target.result as string);
+      }
+    };
+  };
 
   const onTextChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -56,9 +69,9 @@ const NewPostForm: React.FC<NewPostFormProps> = () => {
     const {
       target: { name, value },
     } = event;
-    setTextInputs(prev => ({
-        ...prev,
-        [name]: value,
+    setTextInputs((prev) => ({
+      ...prev,
+      [name]: value,
     }));
   };
 
@@ -68,6 +81,7 @@ const NewPostForm: React.FC<NewPostFormProps> = () => {
         {formTabs.map((item) => (
           // eslint-disable-next-line react/jsx-key
           <TabItem
+            key={item.title}
             item={item}
             selected={item.title === selectedTab}
             setSelectedTab={setSelectedTab}
@@ -81,6 +95,14 @@ const NewPostForm: React.FC<NewPostFormProps> = () => {
             handleCreatePost={handleCreatePost}
             onChange={onTextChange}
             loading={loading}
+          />
+        )}
+        {selectedTab === "Images & Video" && (
+          <ImageUpload
+            onSelectImage={onSelectImage}
+            selectedFile={selectedFile}
+            setSelectedFile={setSelectedFile}
+            setSelectedTab={setSelectedTab}
           />
         )}
       </Flex>
