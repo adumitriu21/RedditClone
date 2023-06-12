@@ -91,8 +91,9 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
                 imageURL: downloadURL,
             });
 
-         }
+         };
         
+         router.back();
        
         
     } catch (error) {
@@ -100,7 +101,9 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
         setError(true)
     }
    
-    setLoading(false)
+    setLoading(false);
+
+   
   };
 
   const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {

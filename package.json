@@ -16,6 +16,7 @@
     "@fontsource/raleway": "^5.0.0",
     "firebase": "^9.22.0",
     "framer-motion": "^10.12.12",
+    "moment": "^2.29.4",
     "next": "13.4.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
