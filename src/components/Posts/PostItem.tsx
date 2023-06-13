@@ -1,4 +1,4 @@
-import React, { use } from "react";
+import React, { use, useState } from "react";
 import { Post } from "../../atoms/postsAtom";
 import { AiOutlineDelete } from "react-icons/ai";
 import { BsChat, BsDot } from "react-icons/bs";
@@ -11,7 +11,7 @@ import {
   IoArrowUpCircleSharp,
   IoBookmarkOutline,
 } from "react-icons/io5";
-import { Flex, Icon, Stack, Text, Image } from "@chakra-ui/react";
+import { Flex, Icon, Stack, Text, Image, Skeleton, Spinner, Alert, AlertIcon, AlertTitle } from "@chakra-ui/react";
 import moment from "moment";
 
 type PostItemProps = {
@@ -19,7 +19,7 @@ type PostItemProps = {
   userIsCreator: boolean;
   userVoteValue?: number;
   onVote: () => {};
-  onDeletePost: () => {};
+  onDeletePost: (post: Post) => Promise<boolean>;
   onSelectPost: () => void;
 };
 
@@ -31,6 +31,25 @@ const PostItem: React.FC<PostItemProps> = ({
   onSelectPost,
   onVote,
 }) => {
+  const [loadingImage, setLoadingImage] = useState(true);
+  const [loadingDelete, setLoadingDelete] = useState(false)
+  const [error, setError] = useState(false)
+
+  const handleDelete = async() => {
+    setLoadingDelete(true)
+    try {
+        const success = await onDeletePost(post);
+
+        if(!success){
+            throw new Error('failed to delete post')
+        }
+
+        console.log('the post was successfully deleted')
+    } catch (error: any) {
+        setError(error.message)    
+    }
+    setLoadingDelete(false)
+  };
   return (
     <Flex
       border="1px solid"
@@ -72,12 +91,20 @@ const PostItem: React.FC<PostItemProps> = ({
         />
       </Flex>
       <Flex direction="column" width="100%">
+      { error && (
+        <Alert status='error'>
+        <AlertIcon />
+        <AlertTitle>{error}</AlertTitle>
+      </Alert>
+      )}
         <Stack spacing={1} padding="10px">
           <Stack direction="row" spacing={0.6} align="center" fontSize="9pt">
             {/* home page check */}
             <Text>
-              Post by u/{post.creatorDisplayName}{" "}
-              {moment(new Date(post.createdAt?.seconds * 1000)).fromNow}
+              Post by u/
+              {post.creatorDisplayName +
+                " " +
+                moment(new Date(post.createdAt?.seconds * 1000)).fromNow}
             </Text>
           </Stack>
           <Text fontSize="12pt" fontWeight={600}>
@@ -87,7 +114,16 @@ const PostItem: React.FC<PostItemProps> = ({
           <Text fontSize="10pt"> {post.body}</Text>
           {post.imageURL && (
             <Flex justify="center" align="center" p={2}>
-              <Image src={post.imageURL} alt="post image" maxHeight="460px" />
+              {loadingImage && (
+                <Skeleton height="200px" width="100%" borderRadius={4} />
+              )}
+              <Image
+                src={post.imageURL}
+                alt="post image"
+                maxHeight="460px"
+                display={loadingImage ? 'none' : 'unset'}
+                onLoad={() => setLoadingImage(false)}
+              />
             </Flex>
           )}
         </Stack>
@@ -100,7 +136,7 @@ const PostItem: React.FC<PostItemProps> = ({
             cursor="pointer"
           >
             <Icon as={BsChat} mr={2} />
-            <Text fontSize='9pt'>{post.numberOfComments}</Text>
+            <Text fontSize="9pt">{post.numberOfComments}</Text>
           </Flex>
           <Flex
             align="center"
@@ -110,7 +146,7 @@ const PostItem: React.FC<PostItemProps> = ({
             cursor="pointer"
           >
             <Icon as={IoArrowRedoOutline} mr={2} />
-            <Text fontSize='9pt'>Share</Text>
+            <Text fontSize="9pt">Share</Text>
           </Flex>
           <Flex
             align="center"
@@ -120,19 +156,27 @@ const PostItem: React.FC<PostItemProps> = ({
             cursor="pointer"
           >
             <Icon as={IoBookmarkOutline} mr={2} />
-            <Text fontSize='9pt'>Save</Text>
+            <Text fontSize="9pt">Save</Text>
           </Flex>
-          {userIsCreator && (<Flex
-            align="center"
-            p="8px 10px"
-            borderRadius={4}
-            _hover={{ bg: "gray.200" }}
-            cursor="pointer"
-            onClick={onDeletePost}
-          >
-            <Icon as={AiOutlineDelete} mr={2} />
-            <Text fontSize='9pt'>Delete</Text>
-          </Flex>)}
+          {userIsCreator && (
+            <Flex
+              align="center"
+              p="8px 10px"
+              borderRadius={4}
+              _hover={{ bg: "gray.200" }}
+              cursor="pointer"
+              onClick={handleDelete}
+            >
+             {loadingDelete ? (
+                <Spinner size='sm'/>
+             ) : (
+                <>
+                <Icon as={AiOutlineDelete} mr={2} />
+                <Text fontSize="9pt">Delete</Text>
+                </>
+             )}
+            </Flex>
+          )}
         </Flex>
       </Flex>
     </Flex>
