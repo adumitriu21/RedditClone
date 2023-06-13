@@ -4,7 +4,7 @@ import { atom } from 'recoil'
 export interface Community {
     id: string;
     creatorId: string;
-    numberOfMember: number;
+    numberOfMembers: number;
     privacyType: 'public' | 'private' | 'restricted';
     createdAt?: Timestamp;
     imageURL?: string;
@@ -18,7 +18,7 @@ export interface CommunitySnippet {
 
 interface CommunityState{
     mySnippets: CommunitySnippet[];
-    //vistedCommunities
+    currentCommunity?: Community
 }
 
 const defaultCommunityState: CommunityState = {

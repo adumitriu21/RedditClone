@@ -11,7 +11,18 @@ import {
   IoArrowUpCircleSharp,
   IoBookmarkOutline,
 } from "react-icons/io5";
-import { Flex, Icon, Stack, Text, Image, Skeleton, Spinner, Alert, AlertIcon, AlertTitle } from "@chakra-ui/react";
+import {
+  Flex,
+  Icon,
+  Stack,
+  Text,
+  Image,
+  Skeleton,
+  Spinner,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+} from "@chakra-ui/react";
 import moment from "moment";
 
 type PostItemProps = {
@@ -32,23 +43,23 @@ const PostItem: React.FC<PostItemProps> = ({
   onVote,
 }) => {
   const [loadingImage, setLoadingImage] = useState(true);
-  const [loadingDelete, setLoadingDelete] = useState(false)
-  const [error, setError] = useState(false)
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [error, setError] = useState(false);
 
-  const handleDelete = async() => {
-    setLoadingDelete(true)
+  const handleDelete = async () => {
+    setLoadingDelete(true);
     try {
-        const success = await onDeletePost(post);
+      const success = await onDeletePost(post);
 
-        if(!success){
-            throw new Error('failed to delete post')
-        }
+      if (!success) {
+        throw new Error("failed to delete post");
+      }
 
-        console.log('the post was successfully deleted')
+      console.log("the post was successfully deleted");
     } catch (error: any) {
-        setError(error.message)    
+      setError(error.message);
     }
-    setLoadingDelete(false)
+    setLoadingDelete(false);
   };
   return (
     <Flex
@@ -91,20 +102,19 @@ const PostItem: React.FC<PostItemProps> = ({
         />
       </Flex>
       <Flex direction="column" width="100%">
-      { error && (
-        <Alert status='error'>
-        <AlertIcon />
-        <AlertTitle>{error}</AlertTitle>
-      </Alert>
-      )}
+        {error && (
+          <Alert status="error">
+            <AlertIcon />
+            <AlertTitle>{error}</AlertTitle>
+          </Alert>
+        )}
         <Stack spacing={1} padding="10px">
           <Stack direction="row" spacing={0.6} align="center" fontSize="9pt">
             {/* home page check */}
             <Text>
-              Post by u/
-              {post.creatorDisplayName +
-                " " +
-                moment(new Date(post.createdAt?.seconds * 1000)).fromNow}
+              {"Post by u/"}
+              {post.creatorDisplayName}{" "}
+              {moment(new Date(post.createdAt?.seconds * 1000)).fromNow}
             </Text>
           </Stack>
           <Text fontSize="12pt" fontWeight={600}>
@@ -121,7 +131,7 @@ const PostItem: React.FC<PostItemProps> = ({
                 src={post.imageURL}
                 alt="post image"
                 maxHeight="460px"
-                display={loadingImage ? 'none' : 'unset'}
+                display={loadingImage ? "none" : "unset"}
                 onLoad={() => setLoadingImage(false)}
               />
             </Flex>
@@ -167,14 +177,14 @@ const PostItem: React.FC<PostItemProps> = ({
               cursor="pointer"
               onClick={handleDelete}
             >
-             {loadingDelete ? (
-                <Spinner size='sm'/>
-             ) : (
+              {loadingDelete ? (
+                <Spinner size="sm" />
+              ) : (
                 <>
-                <Icon as={AiOutlineDelete} mr={2} />
-                <Text fontSize="9pt">Delete</Text>
+                  <Icon as={AiOutlineDelete} mr={2} />
+                  <Text fontSize="9pt">Delete</Text>
                 </>
-             )}
+              )}
             </Flex>
           )}
         </Flex>

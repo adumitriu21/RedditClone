@@ -122,7 +122,8 @@ const useCommunityData = () => {
     }, [user]);
     return {
         communityStateValue,
-        onJoinOrLeaveCommunity
+        onJoinOrLeaveCommunity,
+        loading,
     }
  
 }
