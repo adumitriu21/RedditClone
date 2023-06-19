@@ -21,14 +21,20 @@ const usePosts = () => {
   const [postStateValue, setPostStateValue] = useRecoilState(postState);
   const [user] = useAuthState(auth);
   const currentCommunity = useRecoilValue(communityState).currentCommunity;
-  const setAuthModalState = useSetRecoilState(authModalState)
+  const setAuthModalState = useSetRecoilState(authModalState);
   const router = useRouter();
 
-  const onVote = async (post: Post, vote: number, communityId: string) => {
+  const onVote = async (
+    event: React.MouseEvent<SVGElement, MouseEvent>,
+    post: Post,
+    vote: number,
+    communityId: string
+  ) => {
+    event.stopPropagation();
     //check if user is logged in, if not open the auth modal
-    if(!user?.uid){
-        setAuthModalState({ open: true, view: 'login'});
-        return;
+    if (!user?.uid) {
+      setAuthModalState({ open: true, view: "login" });
+      return;
     }
     try {
       const { voteStatus } = post;
@@ -97,12 +103,6 @@ const usePosts = () => {
         }
       }
 
-      //update post document
-      const postRef = doc(firestore, "posts", post.id!);
-      batch.update(postRef, { voteStatus: voteStatus + voteChange });
-
-      await batch.commit();
-
       const postIdx = postStateValue.posts.findIndex(
         (item) => item.id === post.id
       );
@@ -113,17 +113,30 @@ const usePosts = () => {
         posts: updatedPosts,
         postVotes: updatedPostVotes,
       }));
+
+      if (postStateValue.selectedPost) {
+        setPostStateValue((prev) => ({
+          ...prev,
+          selectedPost: updatedPost,
+        }));
+      }
+
+      //update post document
+      const postRef = doc(firestore, "posts", post.id!);
+      batch.update(postRef, { voteStatus: voteStatus + voteChange });
+
+      await batch.commit();
     } catch (error) {
       console.log("onVote error", error);
     }
   };
 
   const onSelectPost = (post: Post) => {
-    setPostStateValue((prev) =>({
-        ...prev,
-        selectedPost: post,
-    }))
-    router.push(`${post.communityId}/comments/${post.id}`)
+    setPostStateValue((prev) => ({
+      ...prev,
+      selectedPost: post,
+    }));
+    router.push(`${post.communityId}/comments/${post.id}`);
   };
 
   const onDeletePost = async (post: Post): Promise<boolean> => {
@@ -156,31 +169,31 @@ const usePosts = () => {
 
     const postVoteDocs = await getDocs(postVotesQuery);
     const postVotes = postVoteDocs.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
+      id: doc.id,
+      ...doc.data(),
     }));
 
     setPostStateValue((prev) => ({
-        ...prev,
-        postVotes: postVotes as PostVote[]
-    }))
+      ...prev,
+      postVotes: postVotes as PostVote[],
+    }));
   };
 
   useEffect(() => {
-    if(!currentCommunity?.id || !user) return;
-    getCommunityPostVotes(currentCommunity?.id)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (!currentCommunity?.id || !user) return;
+    getCommunityPostVotes(currentCommunity?.id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, currentCommunity]);
 
   useEffect(() => {
-    if(!user){
-        setPostStateValue((prev) => ({
-            ...prev,
-            postVotes: []
-        }))
+    if (!user) {
+      setPostStateValue((prev) => ({
+        ...prev,
+        postVotes: [],
+      }));
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   return {
     postStateValue,
