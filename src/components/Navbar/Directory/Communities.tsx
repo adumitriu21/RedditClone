@@ -33,6 +33,38 @@ const Communities: React.FC<CommunitiesProps> = () => {
         >
           <Flex align="center">
             <Icon fontSize={20} mr={2} as={GrAdd} />
+            Moderating
+          </Flex>
+        </MenuItem>
+        {mySnippets
+          .filter((snippet) => snippet.isModerator)
+          .map((snippet) => (
+            <MenuListItem
+              key={snippet.communityId}
+              icon={FaReddit}
+              displayText={`r/${snippet.communityId}`}
+              link={`/r/${snippet.communityId}`}
+              iconColor="blue.500"
+            />
+          ))}
+      </Box>
+      <Box mt={3} mb={4}>
+        <Text
+          pl={3}
+          mb={1}
+          fontSize="7pt"
+          fontWeight={500}
+          color="gray.500"
+        ></Text>
+
+        <MenuItem
+          width="100%"
+          fontSize="10pt"
+          _hover={{ bg: "gray.100" }}
+          onClick={() => setOpen(true)}
+        >
+          <Flex align="center">
+            <Icon fontSize={20} mr={2} as={GrAdd} />
             Create Community
           </Flex>
         </MenuItem>
@@ -42,7 +74,7 @@ const Communities: React.FC<CommunitiesProps> = () => {
             icon={FaReddit}
             displayText={`r/${snippet.communityId}`}
             link={`/r/${snippet.communityId}`}
-            iconColor='blue.500'
+            iconColor="blue.500"
           />
         ))}
       </Box>
