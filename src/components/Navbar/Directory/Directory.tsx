@@ -1,5 +1,13 @@
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import { Flex, Icon, Menu, Text, MenuButton, MenuList, Image } from "@chakra-ui/react";
+import {
+  Flex,
+  Icon,
+  Menu,
+  Text,
+  MenuButton,
+  MenuList,
+  Image,
+} from "@chakra-ui/react";
 import React from "react";
 import { useSetRecoilState } from "recoil";
 import { authModalState } from "../../../atoms/authModalAtom";
@@ -29,7 +37,12 @@ const UserMenu: React.FC = () => {
         >
           <Flex align="center">
             {directoryState.selectedMenuItem.imageURL ? (
-              <Image src={directoryState.selectedMenuItem.imageURL} alt=''/>
+              <Image
+                src={directoryState.selectedMenuItem.imageURL}
+                alt=""
+                borderRadius="full"
+                fontSize="24px"
+              />
             ) : (
               <Icon
                 as={directoryState.selectedMenuItem.icon}
