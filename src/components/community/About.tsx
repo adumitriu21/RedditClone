@@ -45,7 +45,7 @@ const About: React.FC<AboutProps> = ({ communityData }) => {
        await uploadString(imageRef, selectedFile, 'data_url')
        const downloadURL = await getDownloadURL(imageRef)
        await updateDoc(doc(firestore, 'communities', communityData.id), {
-        imageUrl: downloadURL
+        imageURL: downloadURL
        });
 
        setCommunityStateValue(prev => ({

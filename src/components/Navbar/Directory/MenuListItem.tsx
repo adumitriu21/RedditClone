@@ -34,7 +34,7 @@ const MenuListItem: React.FC<MenuListItemProps> = ({
             borderRadius="full"
             boxSize="10px"
             mr={2}
-          ></Image>
+          />
         ) : (
           <Icon as={icon} fontSize={20} mr={2} color={iconColor} />
         )}

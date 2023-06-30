@@ -14,7 +14,7 @@ const CreatePostLink: React.FC = () => {
   const router = useRouter();
   const [user] = useAuthState(auth);
   const setAuthModalState = useSetRecoilState(authModalState);
-  const {toggleMenuOpen} = useDirectory();
+  const { toggleMenuOpen } = useDirectory();
 
   const onClick = () => {
     if (!user) {
@@ -23,11 +23,12 @@ const CreatePostLink: React.FC = () => {
     }
     const { communityId } = router.query;
 
-    if(!communityId){
+    if (communityId) {
       router.push(`${communityId}/submit`);
+    } else {
+      //open our directory menu
+      toggleMenuOpen();
     }
-    //open our directory menu
-    toggleMenuOpen();
   };
   return (
     <Flex

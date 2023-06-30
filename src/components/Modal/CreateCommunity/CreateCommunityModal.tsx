@@ -17,11 +17,14 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import { doc, getDoc, runTransaction, serverTimestamp, setDoc } from "firebase/firestore";
+import Router, { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { BsFillEyeFill, BsFillPersonFill } from "react-icons/bs";
 import { HiLockClosed } from "react-icons/hi";
 import { auth, firestore } from "../../../firebase/clientApp";
+import useDirectory from "../../../hooks/useDirectory";
+
 type CreateCommunityModalProps = {
   open: boolean;
   handleClose: () => void;
@@ -32,11 +35,13 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
   handleClose,
 }) => {
     const [user] = useAuthState(auth)
+    const router = useRouter();
   const [communityName, setCommunityName] = useState("");
   const [charsRemaining, setCharsRemaning] = useState(21);
   const [communityType, setCommunityType] = useState("public");
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const {toggleMenuOpen} = useDirectory();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value.length > 21) return;
@@ -88,13 +93,11 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
           communityId: communityName,
           isModerator: true,
          })
-       
+         
         });
-       
-    
-        // create community
-        
-    
+        handleClose();
+        toggleMenuOpen();
+        router.push(`r/${communityName}`)
         setLoading(false);
     
     } catch (error: any){

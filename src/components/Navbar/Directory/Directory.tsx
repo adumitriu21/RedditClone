@@ -41,7 +41,8 @@ const UserMenu: React.FC = () => {
                 src={directoryState.selectedMenuItem.imageURL}
                 alt=""
                 borderRadius="full"
-                fontSize="24px"
+                boxSize="24px"
+                
               />
             ) : (
               <Icon
@@ -53,7 +54,7 @@ const UserMenu: React.FC = () => {
             )}
 
             <Flex display={{ base: "none", lg: "flex" }}>
-              <Text fontWeight={600} fontSize="10pt">
+              <Text ml={3} fontWeight={600} fontSize="10pt">
                 {directoryState.selectedMenuItem.displayText}
               </Text>
             </Flex>

@@ -22,6 +22,7 @@ import {
   Alert,
   AlertIcon,
   AlertTitle,
+  Link,
 } from "@chakra-ui/react";
 import moment from "moment";
 import { useRouter } from "next/router";
@@ -30,9 +31,15 @@ type PostItemProps = {
   post: Post;
   userIsCreator: boolean;
   userVoteValue?: number;
-  onVote: (event: React.MouseEvent<SVGElement, MouseEvent>, post: Post, vote: number, communityId: string) => void;
+  onVote: (
+    event: React.MouseEvent<SVGElement, MouseEvent>,
+    post: Post,
+    vote: number,
+    communityId: string
+  ) => void;
   onDeletePost: (post: Post) => Promise<boolean>;
   onSelectPost?: (post: Post) => void;
+  homePage?: boolean;
 };
 
 const PostItem: React.FC<PostItemProps> = ({
@@ -42,6 +49,7 @@ const PostItem: React.FC<PostItemProps> = ({
   onDeletePost,
   onSelectPost,
   onVote,
+  homePage,
 }) => {
   const [loadingImage, setLoadingImage] = useState(true);
   const [loadingDelete, setLoadingDelete] = useState(false);
@@ -49,7 +57,7 @@ const PostItem: React.FC<PostItemProps> = ({
   const singlePostPage = !onSelectPost;
   const router = useRouter();
 
-  const handleDelete = async (event: React.MouseEvent<HTMLDivElement>,) => {
+  const handleDelete = async (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
     setLoadingDelete(true);
     try {
@@ -60,7 +68,7 @@ const PostItem: React.FC<PostItemProps> = ({
       }
 
       console.log("the post was successfully deleted");
-      if(singlePostPage){
+      if (singlePostPage) {
         router.push(`/r/${post.communityId}`);
       }
     } catch (error: any) {
@@ -73,18 +81,18 @@ const PostItem: React.FC<PostItemProps> = ({
       border="1px solid"
       bg="white"
       borderColor={singlePostPage ? "white" : "gray.300"}
-      borderRadius={singlePostPage ? '4px 4px 0px 0px' : '4px'}
-      _hover={{ borderColor: singlePostPage ? 'none' : "gray.500" }}
-      cursor={ singlePostPage ? 'unset' : "pointer"}
+      borderRadius={singlePostPage ? "4px 4px 0px 0px" : "4px"}
+      _hover={{ borderColor: singlePostPage ? "none" : "gray.500" }}
+      cursor={singlePostPage ? "unset" : "pointer"}
       onClick={() => onSelectPost && onSelectPost(post)}
     >
       <Flex
         direction="column"
         align="center"
-        bg={singlePostPage ? 'none' : "gray.100"}
+        bg={singlePostPage ? "none" : "gray.100"}
         p={2}
         width="40px"
-        borderRadius={singlePostPage ? '0px' : "3px 0px 0px 3px"}
+        borderRadius={singlePostPage ? "0px" : "3px 0px 0px 3px"}
       >
         <Icon
           as={
@@ -118,6 +126,29 @@ const PostItem: React.FC<PostItemProps> = ({
         <Stack spacing={1} padding="10px">
           <Stack direction="row" spacing={0.6} align="center" fontSize="9pt">
             {/* home page check */}
+            {homePage && (
+              <>
+                {post.communityImageURL ? (
+                  <Image
+                    alt=""
+                    src={post.communityImageURL}
+                    borderRadius="full"
+                    boxSize="18px"
+                  />
+                ) : (
+                  <Icon as={FaReddit} fontSize="18pt" mr={1} color="blue.500" />
+                )}
+                <Link href={`r/${post.communityId}`}>
+                  <Text
+                    fontWeight={700}
+                    _hover={{ textDecoration: "underline" }}
+                    onClick={(event) => event.stopPropagation()}
+                  >{`r/${post.communityId}`}
+                  </Text>
+                </Link>
+                <Icon as={BsDot} color='gray.500' fontSize={8} />
+              </>
+            )}
             <Text>
               <>
                 {"Post by u/"}
