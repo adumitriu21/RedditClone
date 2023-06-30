@@ -7,7 +7,7 @@ import {
   IoArrowDownCircleOutline,
   IoArrowUpCircleOutline,
 } from "react-icons/io5";
-import Comments from "./comments";
+
 
 type CommentItemProps = {
   comment: Comment;
