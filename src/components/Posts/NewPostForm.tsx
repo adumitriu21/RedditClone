@@ -15,12 +15,8 @@ import { uploadString } from "firebase/storage";
 import useSelectFile from "../../hooks/useSelectFile";
 import TabItem from "./TabItem";
 
-type NewPostFormProps = {
-    user: User;
-    communityImageURL?: string;
-};
 
-const formTabs: TabItem[] = [
+const formTabs: TabItemType[] = [
   {
     title: "Post",
     icon: IoDocumentText,
@@ -43,7 +39,15 @@ const formTabs: TabItem[] = [
   },
 ];
 
+export type TabItemType = {
+  title: string;
+  icon: typeof Icon.arguments;
+};
 
+type NewPostFormProps = {
+  user: User;
+  communityImageURL?: string;
+};
 
 const NewPostForm: React.FC<NewPostFormProps> = ({ user , communityImageURL}) => {
   const router = useRouter();
@@ -122,10 +126,10 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user , communityImageURL}) =>
   return (
     <Flex direction="column" bg="white" borderRadius={4} mt={2}>
       <Flex width="100%">
-        {formTabs.map((item) => (
+        {formTabs.map((item, index) => (
           // eslint-disable-next-line react/jsx-key
           <TabItem
-            key={item.title}
+            key={index}
             item={item}
             selected={item.title === selectedTab}
             setSelectedTab={setSelectedTab}
