@@ -43,10 +43,7 @@ const formTabs: TabItem[] = [
   },
 ];
 
-export type TabItem = {
-  title: string;
-  icon: typeof Icon.arguments;
-};
+
 
 const NewPostForm: React.FC<NewPostFormProps> = ({ user , communityImageURL}) => {
   const router = useRouter();
